@@ -12,7 +12,7 @@ var ctx;
 var black_tile, white_tile;
 var rule_array = [1,3]; // specifies the turn associated with each state.
 
-var use_truchet = true;
+var use_truchet = false;
 var use_lines = false;
 var tr1, tr2;
 var tr_a, tr_b, tr_c, tr_d;
@@ -30,34 +30,34 @@ var truchet_color_array = [blue, yellow];
 
 // bit patterns for plain tiles with separating grid lines:
 
-var plain_square2 = [
-		     0,1,
-		     1,1];
-var plain_square3 = [
-		     0,0,0,
-		     0,1,1,
-		     0,1,1];
-var plain_square4 = [ 
-		     0,0,0,0,
-		     0,1,1,1,
-		     0,1,1,1,
-		     0,1,1,1];
-var plain_square5 = [
-		     0,0,0,0,0,
-		     0,1,1,1,1,
-		     0,1,1,1,1,
-		     0,1,1,1,1,
-		     0,1,1,1,1];
-var plain_square6 = [
-		     0,0,0,0,0,0,
-		     0,1,1,1,1,1,
-		     0,1,1,1,1,1,
-		     0,1,1,1,1,1,
-		     0,1,1,1,1,1,
-		     0,1,1,1,1,1];
+// var plain_square2 = [
+// 		     0,1,
+// 		     1,1];
+// var plain_square3 = [
+// 		     0,0,0,
+// 		     0,1,1,
+// 		     0,1,1];
+// var plain_square4 = [ 
+// 		     0,0,0,0,
+// 		     0,1,1,1,
+// 		     0,1,1,1,
+// 		     0,1,1,1];
+// var plain_square5 = [
+// 		     0,0,0,0,0,
+// 		     0,1,1,1,1,
+// 		     0,1,1,1,1,
+// 		     0,1,1,1,1,
+// 		     0,1,1,1,1];
+// var plain_square6 = [
+// 		     0,0,0,0,0,0,
+// 		     0,1,1,1,1,1,
+// 		     0,1,1,1,1,1,
+// 		     0,1,1,1,1,1,
+// 		     0,1,1,1,1,1,
+// 		     0,1,1,1,1,1];
 
-var plain_square_array = [[],[1],plain_square2, plain_square3,plain_square4, plain_square5, plain_square6];
-var plain_square = plain_square_array[tile_size];
+// var plain_square_array = [[],[1],plain_square2, plain_square3,plain_square4, plain_square5, plain_square6];
+// var a_plain_square = plain_square_array[tile_size];
 
 var color_tiles = [];
 //var i = 0;
@@ -72,6 +72,19 @@ var colors_of_turns = [3,5,2,4]; // turn 1 (L) has color 5 (yellow), etc.
 var bwId;
 var nos = 0;
 
+function plain_square(n){
+    if(n == 1){ return [1]; }
+    else if(n == 2){ return [1,1,1,1]; }
+    else{ // n >= 3
+	var array = [];
+	for(var i=0; i<n; i++){
+	    for(var j=0; j<n; j++){
+		array.push((j == 0 || i == 0)? 0: 1);
+	    }
+	}
+	return array;
+    }
+}
 
 // obj represents a tile, a is an array holding integers 
 // indicating the colors of the various pixels in the tile
@@ -109,36 +122,26 @@ function step(){
 	var new_turn = rule_array[new_state];
 
 	// display the new state.
-	var id;
+	var image_data;
 	if(use_truchet){
 		if(use_lines){
 			if((ant_x + ant_y) % 2 == 0){
-				id = (new_turn == 1) ?  tr1 : tr2;
+				image_data = (new_turn == 1) ?  tr1 : tr2;
 			}else{
-				id = (new_turn == 1) ?  tr2 : tr1;
+				image_data = (new_turn == 1) ?  tr2 : tr1;
 			}
 		}else{
 			if((ant_x + ant_y) % 2 == 0){
-				id = (new_turn == 1)? tr_a: tr_c;
+				image_data = (new_turn == 1)? tr_a: tr_c;
 			}else{
-				id = (new_turn == 1)? tr_b: tr_d;
+				image_data = (new_turn == 1)? tr_b: tr_d;
 			}
 		}
 	}
 	else{ // no truchet tiles
-	switch(new_turn){
-	case 0:
-		id = green_tile; break;
-case 1:
-	id = white_tile; break;
-case 2:
-	id = red_tile; break;
-case 3:
-	id = black_tile; break;
-}		
-//	id = (new_turn == 1)? white_tile: black_tile;
+	image_data = color_tiles[colors_of_turns[new_turn]];
 	}
-	ctx.putImageData(id, ant_x * tile_size, ant_y * tile_size);
+	ctx.putImageData(image_data, ant_x * tile_size, ant_y * tile_size);
 
 	// move the ant
 	switch(ant_direction){
@@ -218,30 +221,30 @@ function load(x){
 	ctx = canvas.getContext("2d");
 
 
-	if(tile_size == 2){
-		black_tile = sta(plain_square2, [gray, black], ctx.createImageData(tile_size, tile_size));
-		white_tile = sta(plain_square2, [gray, white], ctx.createImageData(tile_size, tile_size));
-		green_tile = sta(plain_square2, [gray, green], ctx.createImageData(tile_size, tile_size));
-		red_tile = sta(plain_square2, [gray, red], ctx.createImageData(tile_size, tile_size));
-	}
-	else if(tile_size == 3){
-		black_tile = sta(plain_square3, [gray, black], ctx.createImageData(tile_size, tile_size));
-		white_tile = sta(plain_square3, [gray, white], ctx.createImageData(tile_size, tile_size));
-		green_tile = sta(plain_square3, [gray, green], ctx.createImageData(tile_size, tile_size));
-		red_tile = sta(plain_square3, [gray, red], ctx.createImageData(tile_size, tile_size));
-	}	
-	else if(tile_size == 4){
-		black_tile = sta(plain_square4, [gray, black], ctx.createImageData(tile_size, tile_size));
-		white_tile = sta(plain_square4, [gray, white], ctx.createImageData(tile_size, tile_size));
-		green_tile = sta(plain_square4, [gray, green], ctx.createImageData(tile_size, tile_size));
-		red_tile = sta(plain_square4, [gray, red], ctx.createImageData(tile_size, tile_size));
-	} 
-	else if(tile_size == 6){
-		black_tile = sta(plain_square6, [gray, black], ctx.createImageData(tile_size, tile_size));
-		white_tile = sta(plain_square6, [gray, white], ctx.createImageData(tile_size, tile_size));
-		green_tile = sta(plain_square6, [gray, green], ctx.createImageData(tile_size, tile_size));
-		red_tile = sta(plain_square6, [gray, red], ctx.createImageData(tile_size, tile_size));
-	}
+	// if(tile_size == 2){
+	//     black_tile = sta(plain_square2, [gray, black], ctx.createImageData(tile_size, tile_size));
+	// 	white_tile = sta(plain_square2, [gray, white], ctx.createImageData(tile_size, tile_size));
+	// 	green_tile = sta(plain_square2, [gray, green], ctx.createImageData(tile_size, tile_size));
+	// 	red_tile = sta(plain_square2, [gray, red], ctx.createImageData(tile_size, tile_size));
+	// }
+	// else if(tile_size == 3){
+	// 	black_tile = sta(plain_square3, [gray, black], ctx.createImageData(tile_size, tile_size));
+	// 	white_tile = sta(plain_square3, [gray, white], ctx.createImageData(tile_size, tile_size));
+	// 	green_tile = sta(plain_square3, [gray, green], ctx.createImageData(tile_size, tile_size));
+	// 	red_tile = sta(plain_square3, [gray, red], ctx.createImageData(tile_size, tile_size));
+	// }	
+	// else if(tile_size == 4){
+	// 	black_tile = sta(plain_square4, [gray, black], ctx.createImageData(tile_size, tile_size));
+	// 	white_tile = sta(plain_square4, [gray, white], ctx.createImageData(tile_size, tile_size));
+	// 	green_tile = sta(plain_square4, [gray, green], ctx.createImageData(tile_size, tile_size));
+	// 	red_tile = sta(plain_square4, [gray, red], ctx.createImageData(tile_size, tile_size));
+	// } 
+	// else if(tile_size == 6){
+	// 	black_tile = sta(plain_square6, [gray, black], ctx.createImageData(tile_size, tile_size));
+	// 	white_tile = sta(plain_square6, [gray, white], ctx.createImageData(tile_size, tile_size));
+	// 	green_tile = sta(plain_square6, [gray, green], ctx.createImageData(tile_size, tile_size));
+	// 	red_tile = sta(plain_square6, [gray, red], ctx.createImageData(tile_size, tile_size));
+	// }
 
 
 	if(tile_size == 4){
@@ -399,7 +402,7 @@ function load(x){
 
 // var color_tiles = [];
  var i; for(i in colors){
- 	var a_tile = sta(plain_square, [colors[i], gray], ctx.createImageData(tile_size, tile_size));
+     var a_tile = sta(plain_square(tile_size), [gray, colors[i]], ctx.createImageData(tile_size, tile_size));
  	color_tiles.push(a_tile);
  }
  var colors_of_turns = [3,5,2,4]; // turn 1 (L) has color 5 (yellow), etc.
@@ -408,27 +411,23 @@ function load(x){
 		var ipx = i * tile_size;
 		for(j = 0; j < width; j++){
 			var jpx = j * tile_size;
-			if(! use_truchet){
-			    //  alert([rule_array[0], colors_of_turns[1]]);
+			if(! use_truchet){			  
 			       ctx.putImageData(color_tiles[colors_of_turns[rule_array[0]]], ipx, jpx);
-			       //    ctx.putImageData(color_tiles[3], ipx, jpx);
-			    //		if(rule_array[0] == 1){
-			    //		ctx.putImageData(white_tile, ipx, jpx);
-			    //	}else{
-			    //		ctx.putImageData(black_tile, ipx, jpx);
-			    //	}
 			}else{
 				if((j + i) % 2 == 0){
 					if(use_lines){
 						ctx.putImageData(tr1, ipx, jpx);          
 					}else{
-						ctx.putImageData(tr_a, ipx, jpx);
+					    var tre = (rule_array[0] == 1)? tr_a: tr_c;
+						ctx.putImageData(tre, ipx, jpx);
+						
 					}
 				}else{
 					if(use_lines){
 						ctx.putImageData(tr2, ipx, jpx);
 					}else{
-						ctx.putImageData(tr_b, ipx, jpx);
+					    var tro = (rule_array[0] == 1)? tr_b: tr_d;
+					    						ctx.putImageData(tro, ipx, jpx);
 					}}
 			}}
 	}
@@ -484,7 +483,7 @@ function multistep(){
 }
 function uv(){ // implement changed values of tile_size, width, height?
 	var rule_string = document.getElementById("rstr").value;
-	rule_array = rule_string.split(",");
+	rule_array = rule_string.split("");
 	var i;	
 for(i in rule_array){
 	rule_array[i] = parseInt(rule_array[i]);
