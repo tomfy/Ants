@@ -1,21 +1,6 @@
-// obj represents a tile, a is an array holding integers 
-// indicating the colors of the various pixels in the tile
-
-function sta(a, color_array, obj){
-	for(i = 0; i < obj.width * obj.height; i++){
-		var j; // 4 bytes per pixel: rgba
-		var rgba = color_array[a[i]];
-		//		obj.data = rgba.slice();
-		// obj.data.splice(4*i, 4, rgba);
-		for(j = 0; j < 4; j++){
-			obj.data[4*i + j] = rgba[j]; //obj.data[j+1] = obj.data[j+2] = a[i] ? 255 : 0;
-		}
-	}
-	return obj;
-}
 
 var interval;
-var tile_size = 4; // 4;  //4;  // tile size is tile_size x tile_size pixels.
+var tile_size = 6; // 4;  //4;  // tile size is tile_size x tile_size pixels.
 var width; // width in tiles of ant's world 
 var height; // height in tiles of ant's world
 var ant_x; // ant x coordinate, 0 to width-1
@@ -46,43 +31,64 @@ var truchet_color_array = [blue, yellow];
 // bit patterns for plain tiles with separating grid lines:
 
 var plain_square2 = [
-0,1,
-	1,1];
+		     0,1,
+		     1,1];
 var plain_square3 = [
-0,0,0,
-	0,1,1,
-	0,1,1];
+		     0,0,0,
+		     0,1,1,
+		     0,1,1];
 var plain_square4 = [ 
-0,0,0,0,
-	0,1,1,1,
-	0,1,1,1,
-	0,1,1,1];
+		     0,0,0,0,
+		     0,1,1,1,
+		     0,1,1,1,
+		     0,1,1,1];
 var plain_square5 = [
-0,0,0,0,0,
-0,1,1,1,1,
-0,1,1,1,1,
-0,1,1,1,1,
-0,1,1,1,1];
+		     0,0,0,0,0,
+		     0,1,1,1,1,
+		     0,1,1,1,1,
+		     0,1,1,1,1,
+		     0,1,1,1,1];
 var plain_square6 = [
-0,0,0,0,0,0,
-	0,1,1,1,1,1,
-	0,1,1,1,1,1,
-	0,1,1,1,1,1,
-	0,1,1,1,1,1,
-	0,1,1,1,1,1];
+		     0,0,0,0,0,0,
+		     0,1,1,1,1,1,
+		     0,1,1,1,1,1,
+		     0,1,1,1,1,1,
+		     0,1,1,1,1,1,
+		     0,1,1,1,1,1];
 
 var plain_square_array = [[],[1],plain_square2, plain_square3,plain_square4, plain_square5, plain_square6];
 var plain_square = plain_square_array[tile_size];
 
 var color_tiles = [];
-var i; for(i in colors){
-	var a_tile = sta(plain_square, [colors[i], gray], ctx.createImageData(tile_size, tile_size));
-	color_tiles.push(a_tile);
-}
+//var i = 0;
+//var c; for(c in colors){
+//   var a_tile = sta(plain_square6, [gray, red], // colors[i]], 
+//		     ctx.createImageData(tile_size, tile_size));
+//    color_tiles[i] = a_tile;
+ //	color_tiles.push(a_tile);
+//}
 var colors_of_turns = [3,5,2,4]; // turn 1 (L) has color 5 (yellow), etc.
 	
 var bwId;
 var nos = 0;
+
+
+// obj represents a tile, a is an array holding integers 
+// indicating the colors of the various pixels in the tile
+
+function sta(a, color_array, obj){
+	for(i = 0; i < obj.width * obj.height; i++){
+		var j; // 4 bytes per pixel: rgba
+		var rgba = color_array[a[i]];
+		//		obj.data = rgba.slice();
+		// obj.data.splice(4*i, 4, rgba);
+		for(j = 0; j < 4; j++){
+			obj.data[4*i + j] = rgba[j]; //obj.data[j+1] = obj.data[j+2] = a[i] ? 255 : 0;
+		}
+	}
+	return obj;
+}
+
 
 function step(){
 	// alert(['ant_x/y: ', ant_x, ant_y]);
@@ -390,16 +396,27 @@ function load(x){
 	}
 	ctx.fillStyle = "#FFF";
 	ctx.fillRect(0, 0, width * tile_size, height * tile_size);
+
+// var color_tiles = [];
+ var i; for(i in colors){
+ 	var a_tile = sta(plain_square, [colors[i], gray], ctx.createImageData(tile_size, tile_size));
+ 	color_tiles.push(a_tile);
+ }
+ var colors_of_turns = [3,5,2,4]; // turn 1 (L) has color 5 (yellow), etc.
+
 	for(i = 0; i < height; i++){
 		var ipx = i * tile_size;
 		for(j = 0; j < width; j++){
 			var jpx = j * tile_size;
 			if(! use_truchet){
-				if(rule_array[0] == 1){
-					ctx.putImageData(white_tile, ipx, jpx);
-				}else{
-					ctx.putImageData(black_tile, ipx, jpx);
-				}
+			    //  alert([rule_array[0], colors_of_turns[1]]);
+			       ctx.putImageData(color_tiles[colors_of_turns[rule_array[0]]], ipx, jpx);
+			       //    ctx.putImageData(color_tiles[3], ipx, jpx);
+			    //		if(rule_array[0] == 1){
+			    //		ctx.putImageData(white_tile, ipx, jpx);
+			    //	}else{
+			    //		ctx.putImageData(black_tile, ipx, jpx);
+			    //	}
 			}else{
 				if((j + i) % 2 == 0){
 					if(use_lines){
