@@ -1,6 +1,6 @@
 
 var interval;
-var tile_size = 6; // 4;  //4;  // tile size is tile_size x tile_size pixels.
+var tile_size = 5; // tile size is tile_size x tile_size pixels.
 var width; // width in tiles of ant's world 
 var height; // height in tiles of ant's world
 var ant_x; // ant x coordinate, 0 to width-1
@@ -28,49 +28,10 @@ var gray = [120,120,120,255];
 var colors = [black,white,red,green,blue,yellow];
 var truchet_color_array = [blue, yellow];
 
-// bit patterns for plain tiles with separating grid lines:
-
-// var plain_square2 = [
-// 		     0,1,
-// 		     1,1];
-// var plain_square3 = [
-// 		     0,0,0,
-// 		     0,1,1,
-// 		     0,1,1];
-// var plain_square4 = [ 
-// 		     0,0,0,0,
-// 		     0,1,1,1,
-// 		     0,1,1,1,
-// 		     0,1,1,1];
-// var plain_square5 = [
-// 		     0,0,0,0,0,
-// 		     0,1,1,1,1,
-// 		     0,1,1,1,1,
-// 		     0,1,1,1,1,
-// 		     0,1,1,1,1];
-// var plain_square6 = [
-// 		     0,0,0,0,0,0,
-// 		     0,1,1,1,1,1,
-// 		     0,1,1,1,1,1,
-// 		     0,1,1,1,1,1,
-// 		     0,1,1,1,1,1,
-// 		     0,1,1,1,1,1];
-
-// var plain_square_array = [[],[1],plain_square2, plain_square3,plain_square4, plain_square5, plain_square6];
-// var a_plain_square = plain_square_array[tile_size];
-
 var color_tiles = [];
-//var i = 0;
-//var c; for(c in colors){
-//   var a_tile = sta(plain_square6, [gray, red], // colors[i]], 
-//		     ctx.createImageData(tile_size, tile_size));
-//    color_tiles[i] = a_tile;
- //	color_tiles.push(a_tile);
-//}
 var colors_of_turns = [3,5,2,4]; // turn 1 (L) has color 5 (yellow), etc.
 	
-var bwId;
-var nos = 0;
+var n_steps = 0;
 
 function plain_square(n){
     if(n == 1){ return [1]; }
@@ -165,7 +126,7 @@ function step(){
 	else if(ant_x >= width){ant_x -= width}
 	if(ant_y < 0){ant_y += height}
 	else if(ant_y >= height){ant_y -= height}
-	nos++;
+	n_steps++;
 }
 function marray(input, times){
 	var k;
@@ -219,32 +180,6 @@ function load(x){
 	var j;
 
 	ctx = canvas.getContext("2d");
-
-
-	// if(tile_size == 2){
-	//     black_tile = sta(plain_square2, [gray, black], ctx.createImageData(tile_size, tile_size));
-	// 	white_tile = sta(plain_square2, [gray, white], ctx.createImageData(tile_size, tile_size));
-	// 	green_tile = sta(plain_square2, [gray, green], ctx.createImageData(tile_size, tile_size));
-	// 	red_tile = sta(plain_square2, [gray, red], ctx.createImageData(tile_size, tile_size));
-	// }
-	// else if(tile_size == 3){
-	// 	black_tile = sta(plain_square3, [gray, black], ctx.createImageData(tile_size, tile_size));
-	// 	white_tile = sta(plain_square3, [gray, white], ctx.createImageData(tile_size, tile_size));
-	// 	green_tile = sta(plain_square3, [gray, green], ctx.createImageData(tile_size, tile_size));
-	// 	red_tile = sta(plain_square3, [gray, red], ctx.createImageData(tile_size, tile_size));
-	// }	
-	// else if(tile_size == 4){
-	// 	black_tile = sta(plain_square4, [gray, black], ctx.createImageData(tile_size, tile_size));
-	// 	white_tile = sta(plain_square4, [gray, white], ctx.createImageData(tile_size, tile_size));
-	// 	green_tile = sta(plain_square4, [gray, green], ctx.createImageData(tile_size, tile_size));
-	// 	red_tile = sta(plain_square4, [gray, red], ctx.createImageData(tile_size, tile_size));
-	// } 
-	// else if(tile_size == 6){
-	// 	black_tile = sta(plain_square6, [gray, black], ctx.createImageData(tile_size, tile_size));
-	// 	white_tile = sta(plain_square6, [gray, white], ctx.createImageData(tile_size, tile_size));
-	// 	green_tile = sta(plain_square6, [gray, green], ctx.createImageData(tile_size, tile_size));
-	// 	red_tile = sta(plain_square6, [gray, red], ctx.createImageData(tile_size, tile_size));
-	// }
 
 
 	if(tile_size == 4){
@@ -399,13 +334,11 @@ function load(x){
 	}
 	ctx.fillStyle = "#FFF";
 	ctx.fillRect(0, 0, width * tile_size, height * tile_size);
-
-// var color_tiles = [];
- var i; for(i in colors){
-     var a_tile = sta(plain_square(tile_size), [gray, colors[i]], ctx.createImageData(tile_size, tile_size));
- 	color_tiles.push(a_tile);
- }
- var colors_of_turns = [3,5,2,4]; // turn 1 (L) has color 5 (yellow), etc.
+	color_tiles = []; // empty the array
+	var i; for(i in colors){
+	    color_tiles.push(sta(plain_square(tile_size), [gray, colors[i]], ctx.createImageData(tile_size, tile_size)));
+	}
+	var colors_of_turns = [3,5,2,4]; // turn 1 (L) has color 5 (yellow), etc.
 
 	for(i = 0; i < height; i++){
 		var ipx = i * tile_size;
@@ -443,7 +376,7 @@ function key_press_handler(ev){
 			pause();
 		}
 	}
-	else if(ev.charCode == 49 && ev.charCode <= 57){ // 1-9
+	else if(ev.charCode >= 49 && ev.charCode <= 57){ // 1-9
 	//	if(interval !== undefined){pause()}
 		for(i = 0; i < ev.charCode-48; i++){
 			step();
@@ -456,10 +389,6 @@ function key_press_handler(ev){
 
 var dc = false;
 function multistep(){
-	/* for(var ii = 0; ii < n_steps; ii++){
-	   step();
-	   } */
-
 	step();
 	step();
 	step();
@@ -487,16 +416,31 @@ function uv(){ // implement changed values of tile_size, width, height?
 	var i;	
 for(i in rule_array){
 	rule_array[i] = parseInt(rule_array[i]);
-}	
-
-//alert(rule_array);
-//	tile_size = parseInt(document.getElementById("pxs").value);
-//	width = parseInt(document.getElementById("width").value) / tile_size;
-//	height = parseInt(document.getElementById("height").value) / tile_size;
+}
 	dc = true; // if true doesn't rest canvas on resize.
 	setTimeout(changable, 60000);
 	load(true);
 }
+	
+
+function set_tile_size(){
+    var new_tile_size = document.getElementById("tilesize").value;
+    tile_size = parseInt(new_tile_size);
+    //   alert([new_tile_size, tile_size]);
+    load(true);
+}
+
+function cycle_rule_string(){
+    //  var rule_string = document.getElementById("rstr").value;
+    // 	rule_array = rule_string.split("");
+	var x = rule_array.shift();
+	rule_array.push(x);
+	//	alert(rule_array);
+	dc = true; // if true doesn't rest canvas on resize.
+	setTimeout(changable, 60000);
+	load(true);
+}
+
 function changable(){
 	dc = false;
 }
