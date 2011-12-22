@@ -368,17 +368,18 @@ function load(x){
 } // end of function load
 
 
-function key_press_handler(ev){
-	if(ev.charCode == 32){	
+function key_press_handler(ev_charCode){
+    //  alert(['ev.charCode: ', ev_charCode]);
+    if(ev_charCode == 32){	// space bar
 		if(interval === undefined){
 			play(10);
 		}else{
 			pause();
 		}
 	}
-	else if(ev.charCode >= 49 && ev.charCode <= 57){ // 1-9
+	else if(ev_charCode >= 49 && ev_charCode <= 57){ // 1-9
 	//	if(interval !== undefined){pause()}
-		for(i = 0; i < ev.charCode-48; i++){
+		for(i = 0; i < ev_charCode-48; i++){
 			step();
 		}
 		//		}else{
@@ -410,6 +411,7 @@ function multistep(){
 	step();
 	step(); 
 }
+
 function uv(){ // implement changed values of tile_size, width, height?
 	var rule_string = document.getElementById("rstr").value;
 	rule_array = rule_string.split("");
@@ -435,9 +437,11 @@ function cycle_rule_string(){
     // 	rule_array = rule_string.split("");
 	var x = rule_array.shift();
 	rule_array.push(x);
-	//	alert(rule_array);
+
+	var rule_string = rule_array.join('');
+	document.getElementById("rstr").value = rule_string;
 	dc = true; // if true doesn't rest canvas on resize.
-	setTimeout(changable, 60000);
+	setTimeout(changable, 60000); // call changeable after 60000 milliseconds
 	load(true);
 }
 
