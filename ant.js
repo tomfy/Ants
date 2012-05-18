@@ -12,8 +12,9 @@ var ctx;
 var black_tile, white_tile;
 var rule_array = [1,3]; // specifies the turn associated with each state.
 
-var use_truchet = false;
+var use_truchet = true; // false;
 var use_lines = false;
+use_lines = true;
 var tr1, tr2;
 var tr_a, tr_b, tr_c, tr_d;
 
@@ -194,6 +195,7 @@ function load(x){
 				0,1,1,1,
 				1,0,1,1], truchet_color_array, ctx.createImageData(tile_size, tile_size));
 
+if(0){
 		tr1 = sta([
 				0,0,1,1,
 				0,1,1,0,
@@ -204,6 +206,19 @@ function load(x){
 				0,1,1,0,
 				0,0,1,1,
 				1,0,0,1], truchet_color_array, ctx.createImageData(tile_size,tile_size));
+}
+
+   		tr1 = sta([
+                                0,1,1,0,
+                                1,1,0,0,
+                                1,0,0,1,
+                                0,0,1,1], truchet_color_array, ctx.createImageData(tile_size,tile_size));
+                tr2 = sta([
+                                0,1,1,0,
+                                0,0,1,1,
+                                1,0,0,1,
+                                1,1,0,0], truchet_color_array, ctx.createImageData(tile_size,tile_size));
+
 
 		tr_a = sta([
 				1,0,0,0,
@@ -245,6 +260,24 @@ function load(x){
 				1,0,0,0,0,0,
 				0,1,0,0,0,0,
 				0,0,1,0,0,0], truchet_color_array, ctx.createImageData(tile_size,tile_size));
+
+    tr1 = sta([
+                                0,0,1,1,0,0,
+                                0,1,1,0,0,0,
+                                1,1,0,0,0,0,
+                                1,0,0,0,0,1,
+                                0,0,0,0,1,1,
+                                0,0,0,1,1,0], truchet_color_array, ctx.createImageData(tile_size,tile_size));
+
+                tr2 = sta([
+                                0,0,1,1,0,0,
+                                0,0,0,1,1,0,
+                                0,0,0,0,1,1,
+                                1,0,0,0,0,1,
+                                1,1,0,0,0,0,
+                                0,1,1,0,0,0], truchet_color_array, ctx.createImageData(tile_size,tile_size));
+
+
 
 		//tr2 = sta([], ctx.createImageData(tile_size, tile_size));
 		// truchet tiles, white (1) to ant's R.
@@ -349,7 +382,7 @@ function load(x){
 			}else{
 				if((j + i) % 2 == 0){
 					if(use_lines){
-						ctx.putImageData(tr1, ipx, jpx);          
+					    ctx.putImageData(tr1, ipx, jpx);         
 					}else{
 					    var tre = (rule_array[0] == 1)? tr_a: tr_c;
 						ctx.putImageData(tre, ipx, jpx);
@@ -456,23 +489,4 @@ function amult(ar, t){
 	}
 	return out;
 }
-/*
-   var oid;
-   function draw(){
-   var i, j, ta;
-   var out = [];
-   for(i in stateArray){
-   var a = stateArray[i].map(mf);
-   ta = [];
-   for(j in a){
-   ta = ta.concat(amult(a[j], tile_size));
-   }
-   out = out.concat(amult(ta, tile_size));
-   }
-   oid = ctx.createImageData(width * tile_size, height * tile_size);
-//	for(i in out){
-oid.data = out.slice();
-//	}
-ctx.putImageData(oid, 0, 0);
-}
- */
+
