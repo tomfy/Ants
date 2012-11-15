@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Ant</title>
+		<script src="ant.js"></script>
+	</head>
+	<body onload="load()" onresize="load()" onkeypress="key_press_handler(event.charCode)">
+		<table>
+			<tr>
+				<td>
+					<canvas width="1000" height="1000" id="ac" style="border: solid 1px black"></canvas>
+				</td>
+<td>
+<table>
+<tr>
+<td>
+	<input type="submit" value="Go / Stop." onclick="key_press_handler(32)" />
+</td>
+</tr>
+<tr>
+				<td>
+					Rule string (e.g. '1331'): <input type="text" value="13" id="rstr" /><br />
+					<input type="submit" value="Update rule string" onclick="uv()" />
+</td>
+</tr>
+<tr>
+<td>
+			Tile size: <input type="text" value="6" id="tilesize" /><br />
+					<input type="submit" value="Change tile size." onclick="set_tile_size()" />
+</td>
+</tr>
+<tr>
+<td>
+	<input type="submit" value="Cycle rule string." onclick="cycle_rule_string()" />
+</td>
+</tr>
+</table>
+</td>
+			</tr>
+		</table>
+	</body>
+</html>
